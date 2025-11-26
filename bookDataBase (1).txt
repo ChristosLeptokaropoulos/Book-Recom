@@ -1,0 +1,230 @@
+-- Create 'books' table
+CREATE TABLE books (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR NOT NULL,
+    author VARCHAR NOT NULL,
+    description TEXT NOT NULL
+);
+
+ALTER TABLE books ADD COLUMN rating INTEGER DEFAULT 0;
+
+-- Create 'moods' table
+CREATE TABLE moods (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL UNIQUE
+);
+
+-- Create 'book_moods' table
+CREATE TABLE book_moods (
+    book_id INTEGER NOT NULL,
+    mood_id INTEGER NOT NULL,
+    PRIMARY KEY (book_id, mood_id),
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+    FOREIGN KEY (mood_id) REFERENCES moods(id) ON DELETE CASCADE
+);
+
+-- Create 'comments' table
+CREATE TABLE comments (
+    id SERIAL PRIMARY KEY,
+    book_id INTEGER NOT NULL,
+    comment TEXT NOT NULL,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+);
+
+-- Create 'users' table
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR NOT NULL UNIQUE,
+    email VARCHAR NOT NULL UNIQUE,
+    password_hash VARCHAR NOT NULL
+);
+
+-- Create 'user_library' table
+CREATE TABLE user_library (
+    user_id INTEGER NOT NULL,
+    book_id INTEGER NOT NULL,
+    PRIMARY KEY (user_id, book_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+);
+
+INSERT INTO moods (name) VALUES
+('Happy'),
+('Adventurous'),
+('Philosophical'),
+('Romantic'),
+('Mysterious'),
+('Inspirational'),
+('Fantasy'),
+('Historical'),
+('Sci-Fi'),
+('Thriller');
+
+
+-- Insert books for 'Happy' mood
+WITH inserted_books AS (
+    INSERT INTO books (title, author, description) VALUES
+    ('The Happiness Project', 'Gretchen Rubin', 'Gretchen Rubin embarks on a year-long quest to become happier by making small changes in her life.'),
+    ('The Alchemist', 'Paulo Coelho', 'An inspiring tale about a shepherd named Santiago who travels from Spain to Egypt in search of a treasure.'),
+    ('The Art of Happiness', 'Dalai Lama XIV', 'A practical and spiritual guide to achieving lasting happiness.'),
+    ('Eat, Pray, Love', 'Elizabeth Gilbert', 'A woman''s journey across Italy, India, and Indonesia in search of pleasure, devotion, and balance.'),
+    ('The Little Prince', 'Antoine de Saint-Exupéry', 'A young prince explores the universe and learns valuable lessons about life, love, and happiness.'),
+    ('The Secret', 'Rhonda Byrne', 'Explores the power of positive thinking and the law of attraction.'),
+    ('Tuesdays with Morrie', 'Mitch Albom', 'An old man, a young man, and life''s greatest lessons.')
+    RETURNING id
+)
+INSERT INTO book_moods (book_id, mood_id)
+SELECT id AS book_id, (SELECT id FROM moods WHERE name = 'Happy') AS mood_id
+FROM inserted_books;
+
+-- Insert books for 'Adventurous' mood
+WITH inserted_books AS (
+    INSERT INTO books (title, author, description) VALUES
+    ('Into the Wild', 'Jon Krakauer', 'The story of Christopher McCandless, who leaves his possessions and savings to venture into the Alaskan wilderness in search of a purer existence.'),
+    ('Life of Pi', 'Yann Martel', 'An adventurous tale of a young boy named Pi who survives a shipwreck and is stranded in the Pacific Ocean with a Bengal tiger.'),
+    ('The Lost City of Z', 'David Grann', 'An account of British explorer Percy Fawcett''s adventures in the Amazon as he searches for a lost civilization.'),
+    ('Wild', 'Cheryl Strayed', 'A powerful memoir about a woman''s solo hike along the Pacific Crest Trail after personal tragedies.'),
+    ('Treasure Island', 'Robert Louis Stevenson', 'A classic adventure story of piracy and buried treasure, following young Jim Hawkins on his journey across the seas.'),
+    ('Around the World in Eighty Days', 'Jules Verne', 'Phileas Fogg''s adventurous journey to circumnavigate the globe in 80 days.'),
+    ('The Hobbit', 'J.R.R. Tolkien', 'Bilbo Baggins'' unexpected journey with a group of dwarves to reclaim their mountain home from a dragon.')
+    RETURNING id
+)
+INSERT INTO book_moods (book_id, mood_id)
+SELECT id AS book_id, (SELECT id FROM moods WHERE name = 'Adventurous') AS mood_id
+FROM inserted_books;
+
+
+-- Insert books for 'Philosophical' mood
+WITH inserted_books AS (
+    INSERT INTO books (title, author, description) VALUES
+    ('The Republic', 'Plato', 'A philosophical dialogue exploring justice, politics, and society.'),
+    ('Meditations', 'Marcus Aurelius', 'Personal writings of the Roman Emperor reflecting on Stoic philosophy.'),
+    ('Sophies World', 'Jostein Gaarder', 'A novel that serves as a basic history of philosophy.'),
+    ('Zen and the Art of Motorcycle Maintenance', 'Robert M. Pirsig', 'An inquiry into values, exploring the metaphysics of quality.'),
+    ('Thus Spoke Zarathustra', 'Friedrich Nietzsche', 'A philosophical novel addressing the eternal recurrence and the death of God.'),
+    ('The Stranger', 'Albert Camus', 'A novel that explores existentialism and absurdism through the protagonist Meursault.'),
+    ('Being and Time', 'Martin Heidegger', 'A foundational text of existential phenomenology.')
+    RETURNING id
+)
+INSERT INTO book_moods (book_id, mood_id)
+SELECT id AS book_id, (SELECT id FROM moods WHERE name = 'Philosophical') AS mood_id
+FROM inserted_books;
+
+
+-- Insert books for 'Romantic' mood
+WITH inserted_books AS (
+    INSERT INTO books (title, author, description) VALUES
+    ('Pride and Prejudice', 'Jane Austen', 'A classic romantic novel about the manners and matrimonial machinations among the British gentry of the early 19th century.'),
+    ('The Notebook', 'Nicholas Sparks', 'A touching love story about a young couple who fall in love in the 1940s.'),
+    ('Me Before You', 'Jojo Moyes', 'A romantic novel that explores the relationship between a caregiver and a paralyzed man.'),
+    ('Outlander', 'Diana Gabaldon', 'A historical romance involving time travel and adventure.'),
+    ('Jane Eyre', 'Charlotte Brontë', 'A novel about the experiences of its eponymous heroine, including her growth to adulthood and love for Mr. Rochester.'),
+    ('The Time Traveler''s Wife', 'Audrey Niffenegger', 'A romantic story of a man with a genetic disorder that causes him to time travel unpredictably, and his wife.'),
+    ('Wuthering Heights', 'Emily Brontë', 'A tale of intense and almost demonic love between Catherine Earnshaw and Heathcliff.')
+    RETURNING id
+)
+INSERT INTO book_moods (book_id, mood_id)
+SELECT id AS book_id, (SELECT id FROM moods WHERE name = 'Romantic') AS mood_id
+FROM inserted_books;
+
+
+-- Insert books for 'Mysterious' mood
+WITH inserted_books AS (
+    INSERT INTO books (title, author, description) VALUES
+    ('Gone Girl', 'Gillian Flynn', 'A psychological thriller about a marriage gone terribly wrong.'),
+    ('The Girl with the Dragon Tattoo', 'Stieg Larsson', 'A gripping mystery involving a journalist and a hacker.'),
+    ('The Da Vinci Code', 'Dan Brown', 'A symbologist uncovers a conspiracy within the Catholic Church.'),
+    ('And Then There Were None', 'Agatha Christie', 'Ten strangers are lured to an isolated island and killed one by one.'),
+    ('The Shadow of the Wind', 'Carlos Ruiz Zafón', 'A young boy''s quest to discover the truth about a mysterious author.'),
+    ('In the Woods', 'Tana French', 'A murder detective investigates a crime that may be linked to his own past.'),
+    ('Rebecca', 'Daphne du Maurier', 'A haunting novel about a young woman overshadowed by her husband''s first wife.')
+    RETURNING id
+)
+INSERT INTO book_moods (book_id, mood_id)
+SELECT id AS book_id, (SELECT id FROM moods WHERE name = 'Mysterious') AS mood_id
+FROM inserted_books;
+
+
+-- Insert books for 'Inspirational' mood
+WITH inserted_books AS (
+    INSERT INTO books (title, author, description) VALUES
+    ('The Power of Positive Thinking', 'Norman Vincent Peale', 'A practical guide to mastering the problems of everyday living.'),
+    ('Man''s Search for Meaning', 'Viktor E. Frankl', 'A Holocaust survivor''s insights into finding meaning in all forms of existence.'),
+    ('The Last Lecture', 'Randy Pausch', 'Life lessons from a professor diagnosed with terminal cancer.'),
+    ('The 7 Habits of Highly Effective People', 'Stephen R. Covey', 'A holistic, principle-centered approach for solving personal and professional problems.'),
+    ('The Four Agreements', 'Don Miguel Ruiz', 'A practical guide to personal freedom.'),
+    ('Tuesdays with Morrie', 'Mitch Albom', 'An old man, a young man, and life''s greatest lessons.'),
+    ('The Alchemist', 'Paulo Coelho', 'An inspiring tale about following your dreams.')
+    RETURNING id
+)
+INSERT INTO book_moods (book_id, mood_id)
+SELECT id AS book_id, (SELECT id FROM moods WHERE name = 'Inspirational') AS mood_id
+FROM inserted_books;
+
+
+-- Insert books for 'Fantasy' mood
+WITH inserted_books AS (
+    INSERT INTO books (title, author, description) VALUES
+    ('Harry Potter and the Sorcerer''s Stone', 'J.K. Rowling', 'A young wizard begins his magical education.'),
+    ('The Hobbit', 'J.R.R. Tolkien', 'Bilbo Baggins'' unexpected journey with a group of dwarves to reclaim their mountain home from a dragon.'),
+    ('The Name of the Wind', 'Patrick Rothfuss', 'The story of a magically gifted young man named Kvothe.'),
+    ('American Gods', 'Neil Gaiman', 'A blend of Americana, fantasy, and various strands of ancient and modern mythology.'),
+    ('Mistborn: The Final Empire', 'Brandon Sanderson', 'A group of rebels with magical abilities attempt to overthrow an immortal emperor.'),
+    ('The Chronicles of Narnia: The Lion, the Witch and the Wardrobe', 'C.S. Lewis', 'Four children enter a magical world through a wardrobe.'),
+    ('A Game of Thrones', 'George R.R. Martin', 'Noble families vie for control of the Iron Throne.')
+    RETURNING id
+)
+INSERT INTO book_moods (book_id, mood_id)
+SELECT id AS book_id, (SELECT id FROM moods WHERE name = 'Fantasy') AS mood_id
+FROM inserted_books;
+
+
+-- Insert books for 'Historical' mood
+WITH inserted_books AS (
+    INSERT INTO books (title, author, description) VALUES
+    ('All the Light We Cannot See', 'Anthony Doerr', 'A blind French girl and a German boy whose paths collide in occupied France during World War II.'),
+    ('The Book Thief', 'Markus Zusak', 'A young girl in Nazi Germany steals books and shares them with others.'),
+    ('Wolf Hall', 'Hilary Mantel', 'A historical novel about Thomas Cromwell''s rise to power in the court of Henry VIII.'),
+    ('Memoirs of a Geisha', 'Arthur Golden', 'A fictional memoir of a geisha working in Kyoto before and after World War II.'),
+    ('The Pillars of the Earth', 'Ken Follett', 'A story of the building of a cathedral in the 12th century England.'),
+    ('Outlander', 'Diana Gabaldon', 'A WWII nurse is transported back to 18th-century Scotland.'),
+    ('War and Peace', 'Leo Tolstoy', 'A depiction of Russian society during the Napoleonic Era.')
+    RETURNING id
+)
+INSERT INTO book_moods (book_id, mood_id)
+SELECT id AS book_id, (SELECT id FROM moods WHERE name = 'Historical') AS mood_id
+FROM inserted_books;
+
+
+-- Insert books for 'Sci-Fi' mood
+WITH inserted_books AS (
+    INSERT INTO books (title, author, description) VALUES
+    ('Dune', 'Frank Herbert', 'An epic science fiction tale set on the desert planet Arrakis.'),
+    ('Ender''s Game', 'Orson Scott Card', 'A young boy is trained through increasingly difficult games to become a military leader.'),
+    ('Neuromancer', 'William Gibson', 'A seminal work in the cyberpunk genre.'),
+    ('The Hitchhiker''s Guide to the Galaxy', 'Douglas Adams', 'An absurdist tale following Arthur Dent''s travels through space.'),
+    ('Foundation', 'Isaac Asimov', 'A mathematician predicts the fall of the Galactic Empire.'),
+    ('Snow Crash', 'Neal Stephenson', 'A hacker and pizza delivery driver in a futuristic world.'),
+    ('Ready Player One', 'Ernest Cline', 'A hunt for an Easter egg in a virtual reality game.')
+    RETURNING id
+)
+INSERT INTO book_moods (book_id, mood_id)
+SELECT id AS book_id, (SELECT id FROM moods WHERE name = 'Sci-Fi') AS mood_id
+FROM inserted_books;
+
+
+-- Insert books for 'Thriller' mood
+WITH inserted_books AS (
+    INSERT INTO books (title, author, description) VALUES
+    ('The Girl on the Train', 'Paula Hawkins', 'A woman becomes entangled in a missing persons investigation.'),
+    ('The Silence of the Lambs', 'Thomas Harris', 'An FBI trainee seeks the help of a manipulative cannibal killer.'),
+    ('Shutter Island', 'Dennis Lehane', 'A U.S. Marshal investigates a psychiatric facility on an island.'),
+    ('The Bourne Identity', 'Robert Ludlum', 'An amnesiac tries to discover his true identity amidst a conspiracy.'),
+    ('Dark Places', 'Gillian Flynn', 'A woman revisits the murder of her family, which her brother was convicted for.'),
+    ('Killing Floor', 'Lee Child', 'Jack Reacher gets involved in a conspiracy in a small town.'),
+    ('Gone Tomorrow', 'Lee Child', 'Reacher witnesses a suicide that leads to a complex conspiracy.')
+    RETURNING id
+)
+INSERT INTO book_moods (book_id, mood_id)
+SELECT id AS book_id, (SELECT id FROM moods WHERE name = 'Thriller') AS mood_id
+FROM inserted_books; 
